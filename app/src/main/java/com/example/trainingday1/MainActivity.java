@@ -1,15 +1,19 @@
 package com.example.trainingday1;
 
 import android.content.Intent;
+import android.net.Uri;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Switch;
+import android.widget.Toast;
 
 import com.example.trainingday1.model.Orang;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
+    private static final int REQUEST_CODE =1 ;
     Button btnmove,btnpassdata,btnpassobject,btncallback,btnemail,btncall;
 
     @Override
@@ -57,11 +61,53 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                 break;
             case R.id.btn_callback:
+                callback();
+
                 break;
             case R.id.btn_email:
+                implicitemail();
                 break;
             case R.id.btn_call:
+                implicitcall();
                 break;
+        }
+    }
+    //TODO 6.1
+    private void implicitemail() {
+        Intent email =new Intent(Intent.ACTION_SENDTO,Uri.fromParts("mailto","candakinnara2003@yahoo.com",null) );
+        email.putExtra(Intent.EXTRA_SUBJECT ,"testing 1");
+        email.putExtra(Intent .EXTRA_TEXT ,"body message 1");
+        if (email.resolveActivity(getPackageManager()) != null ){
+            startActivity( Intent.createChooser(email,"Pilih share client"));
+        }else {
+            Toast .makeText(this,"Tidak ada share client",Toast.LENGTH_SHORT ).show() ;
+        }
+       // startActivity(email);
+    }
+
+    //TODO 5.1
+    private void implicitcall() {
+        Intent call=new Intent(Intent.ACTION_DIAL );
+        call.setData(Uri.parse("tel:08128131365"));
+        startActivity(call);
+
+    }
+
+    //TODO 4.6 CALLBACK
+    private void callback() {
+        Intent callback=new Intent(MainActivity .this,Callback .class );
+        startActivityForResult(callback ,REQUEST_CODE) ;
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode ==REQUEST_CODE ){
+            if (resultCode ==RESULT_OK ){
+                String tampung=data.getStringExtra(Callback.Extra_Data );
+                Toast.makeText(this,tampung,Toast.LENGTH_SHORT ).show() ;
+
+            }
         }
     }
 
